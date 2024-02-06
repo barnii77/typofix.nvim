@@ -8,10 +8,8 @@ local typofix = {
 
 ---@param opts table
 function typofix.setup(opts)
-  print("call to setup")
   if opts == nil then
     opts = {}
-    vim.notify("opts is nil")
   end
   typofix.opts = vim.tbl_extend("force", {}, {
     path = "$HOME/.config/nvim/.typofix/typofixes.json",
@@ -34,7 +32,7 @@ function RegisterTypo(incorrect, correct, forced)
   else
     typofix.typofixes[incorrect] = correct
     vim.cmd("iabbrev " .. incorrect .. " " .. correct)
-    vim.notify("Created TypoFix for " .. incorrect .. "(" .. correct .. ")")
+    vim.notify("Created TypoFix for " .. incorrect .. " (" .. correct .. ")")
   end
 end
 
