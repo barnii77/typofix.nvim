@@ -17,6 +17,7 @@ end
 
 ---@param opts table
 function TypoFix:setup(opts)
+  print(opts)
   vim.notify(opts)
   if opts == nil then opts = {} end
   opts = vim.tbl_extend("force", {
