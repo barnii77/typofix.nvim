@@ -1,9 +1,32 @@
+-- TypoFix object for setup (lazy)
 ---@class TypoFix
 ---@field opts table
 local TypoFix = {
   typofixes = {},
 }
 TypoFix.__index = TypoFix
+
+function TypoFix.new()
+  return setmetatable({
+    opts = {
+      path = "$HOME/.config/nvim/.typofix/iabbrevs.vim",
+      enabled = true,
+    }
+  }, TypoFix)
+end
+
+---@param opts table
+function TypoFix:setup(opts)
+  opts = vim.tbl_extend("force", {
+    path = "$HOME/.config/nvim/.typofix/iabbrevs.vim",
+    enabled = true,
+  }, opts)
+  self.opts = opts
+  vim.api.nvim_create_user_command('TypoFixCreate', TypoCreate(), { nargs = 0 })
+end
+
+
+-- functionality
 
 local typofix = TypoFix.new()
 
@@ -32,25 +55,6 @@ end
 
 function TypoCreate()
   vim.ui.input({ prompt = "Incorrect: " }, ReadTypoCorrect)
-end
-
-function TypoFix.new()
-  return setmetatable({
-    opts = {
-      path = "$HOME/.config/nvim/.typofix/iabbrevs.vim",
-      enabled = true,
-    }
-  }, TypoFix)
-end
-
----@param opts table
-function TypoFix:setup(opts)
-  opts = vim.tbl_extend("force", {
-    path = "$HOME/.config/nvim/.typofix/iabbrevs.vim",
-    enabled = true,
-  }, opts)
-  self.opts = opts
-  vim.api.nvim_create_user_command('TypoFixCreate', TypoCreate(), { nargs = 0 })
 end
 
 return typofix
