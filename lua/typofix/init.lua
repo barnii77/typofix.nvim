@@ -22,10 +22,10 @@ function TypoFix:setup(opts)
     path = "$HOME/.config/nvim/.typofix/typofixes.json",
   }, opts)
   self.opts = opts
+  vim.notify(opts)
   vim.api.nvim_create_user_command('TypoFixCreate', CreateTypo, { nargs = 0 })
   vim.api.nvim_create_user_command('TypoFixDelete', DeleteTypo, { nargs = 0 })
 end
-
 
 -- functionality
 
@@ -37,7 +37,8 @@ local typofix = TypoFix.new()
 function RegisterTypo(incorrect, correct, forced)
   if typofix.typofixes[incorrect] and not forced then
     vim.notify("Typo already registered: " .. incorrect)
-    vim.ui.input({ prompt = "Overwrite [y/n]: " }, function(confirmation) if confirmation == "y" then RegisterTypo(incorrrect, correct, true) end end)
+    vim.ui.input({ prompt = "Overwrite [y/n]: " },
+      function(confirmation) if confirmation == "y" then RegisterTypo(incorrrect, correct, true) end end)
   else
     typofix.typofixes[incorrect] = correct
     vim.cmd("iabbrev " .. incorrect .. " " .. correct)
