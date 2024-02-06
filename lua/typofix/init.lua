@@ -42,6 +42,7 @@ function RegisterTypo(incorrect, correct, forced)
   else
     typofix.typofixes[incorrect] = correct
     vim.cmd("iabbrev " .. incorrect .. " " .. correct)
+    vim.notify("Created TypoFix for " .. incorrect .. "(" .. correct .. ")")
   end
 end
 
@@ -50,6 +51,7 @@ function UnregisterTypo(incorrect)
   if typofix.typofixes[incorrect] then
     typofix.typofixes[incorrect] = nil
     vim.cmd("iunabbrev " .. incorrect)
+    vim.notify("Deleted TypoFix for " .. incorrect)
   else
     vim.notify("Typo not found: " .. incorrect)
   end
