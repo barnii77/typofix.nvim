@@ -47,8 +47,10 @@ function typofix.setup(opts)
     opts = {}
   end
   typofix.opts = vim.tbl_extend("force", {}, {
+    -- get home env variable
     path = "$HOME/.config/nvim/.typofix/iabbrevs.vim",
   }, opts)
+  typofix.opts.path = vim.fn.expand(typofix.opts.path .. ":p"):sub(1, -3)
 
   if not PathIsValid(typofix.opts.path) then
     vim.notify("Error in TypoFix plugin setup: Path to typofix storage file is invalid; Path: " .. typofix.opts.path, vim.log.levels.ERROR)
