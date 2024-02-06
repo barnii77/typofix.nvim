@@ -22,9 +22,9 @@ function TypoFix:setup(opts)
     path = "$HOME/.config/nvim/.typofix/typofixes.json",
   }, opts)
   self.opts = opts
-  vim.notify(opts)
   vim.api.nvim_create_user_command('TypoFixCreate', CreateTypo, { nargs = 0 })
   vim.api.nvim_create_user_command('TypoFixDelete', DeleteTypo, { nargs = 0 })
+  vim.api.nvim_create_user_command('TypoFixPrintOpts', function() vim.notify(opts) end, { nargs = 0 })
 end
 
 -- functionality
