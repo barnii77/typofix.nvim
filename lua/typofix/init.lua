@@ -1,26 +1,52 @@
 -- TypoFix object for setup (lazy)
----@class TypoFix
----@field opts table
 
 local typofix = {
   typofixes = {},
 }
 
+--- Utility function to check if path to typo fix storage is valid
+---@param path string
+---@return boolean
+function PathIsValid(path)
+  -- check length of extension
+  local len = path:len()
+  if len < 4 then
+    return false
+  end
+  -- check extension
+  local extension = path:sub(len - 3, len)
+  if extension ~= ".vim" then
+    return false
+  end
+  -- check if path exists (file does not need to exist, but folders do)
+  if not vim.fn.isdirectory(vim.fn.fnamemodify(path, ":h")) then
+    return false
+  end
+  return true
+end
+
+--- Setup called by Lazy / Packer / etc.
 ---@param opts table
 function typofix.setup(opts)
   if opts == nil then
     opts = {}
   end
   typofix.opts = vim.tbl_extend("force", {}, {
-    path = "$HOME/.config/nvim/.typofix/typofixes.json",
+    path = "$HOME/.config/nvim/.typofix/iabbrevs.vim",
   }, opts)
-  vim.api.nvim_create_user_command('TypoFixCreate', CreateTypo, { nargs = 0 })
-  vim.api.nvim_create_user_command('TypoFixDelete', DeleteTypo, { nargs = 0 })
-  vim.api.nvim_create_user_command('TypoFixPrintOpts', function() vim.notify(typofix.opts.path) end, { nargs = 0 })
+
+  if not PathIsValid(typofix.opts.path) then
+    vim.notify("Error in TypoFix plugin setup: Path to typofix storage file is invalid; Path: " .. typofix.opts.path, vim.log.levels.ERROR)
+  else
+    vim.api.nvim_create_user_command('TypoFixCreate', CreateTypo, { nargs = 0 })
+    vim.api.nvim_create_user_command('TypoFixDelete', DeleteTypo, { nargs = 0 })
+    vim.api.nvim_create_user_command('TypoFixPrintOpts', function() vim.notify(typofix.opts.path) end, { nargs = 0 })
+  end
 end
 
 -- functionality
 
+--- Registers a typo
 ---@param incorrect string
 ---@param correct string
 ---@param forced boolean
@@ -32,32 +58,80 @@ function RegisterTypo(incorrect, correct, forced)
   else
     typofix.typofixes[incorrect] = correct
     vim.cmd("iabbrev " .. incorrect .. " " .. correct)
+    SaveTypo(incorrect, correct)
     vim.notify("Created TypoFix for " .. incorrect .. " (" .. correct .. ")")
   end
 end
 
+--- Unregisters a typo in the typo storage file
+---@param incorrect string
+function UnregisterTypoInFile(incorrect)
+  local file = io.open(typofix.opts.path, "r")
+  if file == nil then
+    vim.notify("Could not read file: " .. typofix.opts.path, vim.log.levels.WARN)
+    return
+  end
+  local lines = {}
+  for line in file:lines() do
+    if line ~= (":iabbrev " .. incorrect .. " " .. typofix.typofixes[incorrect]) then
+      table.insert(lines, line)
+    end
+  end
+  file:close()
+  file = io.open(typofix.opts.path, "w")
+  if file == nil then
+    vim.notify("Could not modify file: " .. typofix.opts.path, vim.log.levels.WARN)
+    return
+  end
+  for _, line in ipairs(lines) do
+    file:write(line .. "\n")
+  end
+  file:close()
+end
+
+--- Unregisters a typo
 ---@param incorrect string
 function UnregisterTypo(incorrect)
   if typofix.typofixes[incorrect] then
     typofix.typofixes[incorrect] = nil
     vim.cmd("iunabbrev " .. incorrect)
+    UnregisterTypoInFile(incorrect)
     vim.notify("Deleted TypoFix for " .. incorrect)
   else
     vim.notify("Typo not found: " .. incorrect)
   end
 end
 
+--- Reads the correct form of a typo (called by CreateTypo)
 ---@param incorrect string
 function ReadTypoCorrect(incorrrect)
   vim.ui.input({ prompt = "Correct: " }, function(correct) RegisterTypo(incorrrect, correct, false) end)
 end
 
+--- Creates a typo
 function CreateTypo()
   vim.ui.input({ prompt = "Incorrect: " }, ReadTypoCorrect)
 end
 
+--- Deletes a typo
 function DeleteTypo()
   vim.ui.input({ prompt = "Incorrect: " }, UnregisterTypo)
+end
+
+--- Saves a typo to the typo storage file
+---@param incorrect string
+---@param correct string
+function SaveTypo(incorrect, correct)
+  local file = io.open(typofix.opts.path, "a")
+  if file == nil then
+    file = io.open(typofix.opts.path, "w")
+  end
+  if file == nil then
+    vim.notify("Could not open file: " .. typofix.opts.path, vim.log.levels.WARN)
+    return
+  end
+  file:write(":iabbrev " .. incorrect .. " " .. correct .. "\n")
+  file:close()
 end
 
 return typofix
