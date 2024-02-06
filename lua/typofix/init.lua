@@ -17,10 +17,9 @@ end
 
 ---@param opts table
 function TypoFix:setup(opts)
-  print()
+  print("opts is nil")
   if opts == nil then
     opts = {}
-    vim.notify("opts is nil")
   end
   self.opts = vim.tbl_extend("force", {}, {
     path = "$HOME/.config/nvim/.typofix/typofixes.json",
