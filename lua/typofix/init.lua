@@ -17,7 +17,7 @@ end
 
 ---@param opts table
 function TypoFix:setup(opts)
-  print(opts)
+  vim.notify(opts)
   if opts == nil then opts = {} end
   opts = vim.tbl_extend("force", {
     path = "$HOME/.config/nvim/.typofix/typofixes.json",
@@ -37,8 +37,8 @@ local typofix = TypoFix.new()
 ---@param forced boolean
 function RegisterTypo(incorrect, correct, forced)
   if typofix.typofixes[incorrect] and not forced then
-    print("Typo already registered: " .. incorrect)
-    vim.ui.input({ prompt = "Overwrite [y/n]: " }, function(confirmation) RegisterTypo(incorrrect, correct, confirmation == "y") end)
+    vim.notify("Typo already registered: " .. incorrect)
+    vim.ui.input({ prompt = "Overwrite [y/n]: " }, function(confirmation) if confirmation == "y" then RegisterTypo(incorrrect, correct, true) end end)
   else
     typofix.typofixes[incorrect] = correct
     vim.cmd("iabbrev " .. incorrect .. " " .. correct)
@@ -51,7 +51,7 @@ function UnregisterTypo(incorrect)
     typofix.typofixes[incorrect] = nil
     vim.cmd("iunabbrev " .. incorrect)
   else
-    print("Typo not found: " .. incorrect)
+    vim.notify("Typo not found: " .. incorrect)
   end
 end
 
@@ -61,7 +61,6 @@ function ReadTypoCorrect(incorrrect)
 end
 
 function CreateTypo()
-  print(typofix.opts.path)
   vim.ui.input({ prompt = "Incorrect: " }, ReadTypoCorrect)
 end
 
