@@ -17,7 +17,7 @@ end
 
 ---@param opts table
 function TypoFix:setup(opts)
-  print("call to setup")
+  print("")
   if opts == nil then
     opts = {}
     vim.notify("opts is nil")
