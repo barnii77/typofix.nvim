@@ -10,18 +10,17 @@ TypoFix.__index = TypoFix
 function TypoFix.new()
   return setmetatable({
     opts = {
-      path = "$HOME/.config/nvim/.typofix/iabbrevs.vim",
-      enabled = true,
+      path = "$HOME/.config/nvim/.typofix/typofixes.json",
     }
   }, TypoFix)
 end
 
 ---@param opts table
 function TypoFix:setup(opts)
+  print(opts)
   if opts == nil then opts = {} end
   opts = vim.tbl_extend("force", {
-    path = "$HOME/.config/nvim/.typofix/iabbrevs.vim",
-    enabled = true,
+    path = "$HOME/.config/nvim/.typofix/typofixes.json",
   }, opts)
   self.opts = opts
   vim.api.nvim_create_user_command('TypoFixCreate', CreateTypo, { nargs = 0 })
