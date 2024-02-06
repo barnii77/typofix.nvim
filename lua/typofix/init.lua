@@ -18,9 +18,24 @@ function PathIsValid(path)
   if extension ~= ".vim" then
     return false
   end
-  -- check if path exists (file does not need to exist, but folders do)
+  -- check if path exists
   if not vim.fn.isdirectory(vim.fn.fnamemodify(path, ":h")) then
     return false
+  end
+  local kind = vim.fn.filewritable(path)
+  if kind == 2 then
+    return false
+  end
+  -- otherwise, kind is 0 or 1, meaning it's writable and exists or not
+  if kind == 0 then
+    -- create if doesnt exist
+    local file = io.open(path, "w")
+    if file == nil then
+      -- return false if not writable
+      return false
+    end
+    file:write("")
+    file:close()
   end
   return true
 end
