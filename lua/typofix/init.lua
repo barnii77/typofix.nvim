@@ -61,6 +61,7 @@ function ReadTypoCorrect(incorrrect)
 end
 
 function CreateTypo()
+  print(typofix.opts.path)
   vim.ui.input({ prompt = "Incorrect: " }, ReadTypoCorrect)
 end
 
