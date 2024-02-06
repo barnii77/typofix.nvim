@@ -24,7 +24,7 @@ function TypoFix:setup(opts)
   self.opts = opts
   vim.api.nvim_create_user_command('TypoFixCreate', CreateTypo, { nargs = 0 })
   vim.api.nvim_create_user_command('TypoFixDelete', DeleteTypo, { nargs = 0 })
-  -- vim.api.nvim_create_user_command('TypoFixPrintOpts', function() vim.notify(opts.path) end, { nargs = 0 })
+  vim.api.nvim_create_user_command('TypoFixPrintOpts', function() vim.notify(self.opts.path) end, { nargs = 0 })
 end
 
 -- functionality
