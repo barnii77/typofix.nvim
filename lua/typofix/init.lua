@@ -2,7 +2,9 @@
 ---@class TypoFix
 ---@field opts table
 
-local typofix = {}
+local typofix = {
+  typofixes = {},
+}
 
 ---@param opts table
 function typofix.setup(opts)
