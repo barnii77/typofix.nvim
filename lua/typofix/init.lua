@@ -3,6 +3,7 @@
 ---@field opts table
 local TypoFix = {
   typofixes = {},
+  opts = {},
 }
 TypoFix.__index = TypoFix
 
@@ -31,6 +32,9 @@ end
 
 local typofix = TypoFix.new()
 
+---@param incorrect string
+---@param correct string
+---@param forced boolean
 function RegisterTypo(incorrect, correct, forced)
   if typofix.typofixes[incorrect] and not forced then
     print("Typo already registered: " .. incorrect)
@@ -41,7 +45,8 @@ function RegisterTypo(incorrect, correct, forced)
   end
 end
 
-function DeleteTypo(incorrect)
+---@param incorrect string
+function UnregisterTypo(incorrect)
   if typofix.typofixes[incorrect] then
     typofix.typofixes[incorrect] = nil
     vim.cmd("iunabbrev " .. incorrect)
@@ -50,12 +55,17 @@ function DeleteTypo(incorrect)
   end
 end
 
+---@param incorrect string
 function ReadTypoCorrect(incorrrect)
-  vim.ui.input({ prompt = "Correct: " }, function(correct) RegisterTypo(incorrrect, correct) end)
+  vim.ui.input({ prompt = "Correct: " }, function(correct) RegisterTypo(incorrrect, correct, false) end)
 end
 
 function CreateTypo()
   vim.ui.input({ prompt = "Incorrect: " }, ReadTypoCorrect)
+end
+
+function DeleteTypo()
+  vim.ui.input({ prompt = "Incorrect: " }, UnregisterTypo)
 end
 
 return typofix
