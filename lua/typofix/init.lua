@@ -1,38 +1,25 @@
 -- TypoFix object for setup (lazy)
 ---@class TypoFix
 ---@field opts table
-local TypoFix = {
-  typofixes = {},
-  opts = {},
-}
-TypoFix.__index = TypoFix
 
-function TypoFix.new()
-  return setmetatable({
-    opts = {
-      path = "$HOME/.config/nvim/.typofix/typofixes.json",
-    }
-  }, TypoFix)
-end
+local typofix = {}
 
 ---@param opts table
-function TypoFix:setup(opts)
+function typofix.setup(opts)
   print("call to setup")
   if opts == nil then
     opts = {}
     vim.notify("opts is nil")
   end
-  self.opts = vim.tbl_extend("force", {}, {
+  typofix.opts = vim.tbl_extend("force", {}, {
     path = "$HOME/.config/nvim/.typofix/typofixes.json",
   }, opts)
   vim.api.nvim_create_user_command('TypoFixCreate', CreateTypo, { nargs = 0 })
   vim.api.nvim_create_user_command('TypoFixDelete', DeleteTypo, { nargs = 0 })
-  vim.api.nvim_create_user_command('TypoFixPrintOpts', function() vim.notify(self.opts.path) end, { nargs = 0 })
+  vim.api.nvim_create_user_command('TypoFixPrintOpts', function() vim.notify(typofix.opts.path) end, { nargs = 0 })
 end
 
 -- functionality
-
-local typofix = TypoFix.new()
 
 ---@param incorrect string
 ---@param correct string
