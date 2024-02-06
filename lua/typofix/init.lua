@@ -19,7 +19,7 @@ end
 
 ---@param opts table
 function TypoFix:setup(opts)
-  print("ran typofix new")
+  print("ran typofix setup")
 end
 --   opts = vim.tbl_extend("force", {}, {
 --     path = "$HOME/.config/nvim/.typofix/iabbrevs.vim",
