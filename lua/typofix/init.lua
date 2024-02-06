@@ -20,11 +20,11 @@ end
 ---@param opts table
 function TypoFix:setup(opts)
   print("ran typofix setup")
+  opts = vim.tbl_extend("force", {}, {
+    path = "$HOME/.config/nvim/.typofix/iabbrevs.vim",
+    enabled = true,
+  }, opts)
 end
---   opts = vim.tbl_extend("force", {}, {
---     path = "$HOME/.config/nvim/.typofix/iabbrevs.vim",
---     enabled = true,
---   }, opts)
 --   self.opts = opts
 --   vim.api.nvim_create_user_command('TypoFixCreate', CreateTypo(), { nargs = 0 })
 --   vim.api.nvim_create_user_command('TypoFixDelete', DeleteTypo(), { nargs = 0 })
