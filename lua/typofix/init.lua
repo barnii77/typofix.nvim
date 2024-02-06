@@ -124,7 +124,11 @@ end
 function SaveTypo(incorrect, correct)
   local file = io.open(typofix.opts.path, "a")
   if file == nil then
+    -- if file does not exist, create it
     file = io.open(typofix.opts.path, "w")
+  end
+  if file == nil then
+    file = io.open(typofix.opts.path, "a")
   end
   if file == nil then
     vim.notify("Could not open file: " .. typofix.opts.path, vim.log.levels.WARN)
