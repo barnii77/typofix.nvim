@@ -42,7 +42,7 @@ function RegisterTypo(incorrect, correct, forced)
     vim.ui.input({ prompt = "Overwrite [y/n]: " }, function(confirmation) RegisterTypo(incorrrect, correct, confirmation == "y") end)
   else
     typofix.typofixes[incorrect] = correct
-    vim.cmd.iabbrev(incorrect .. correct)
+    vim.cmd.iabbrev(incorrect, correct)
   end
 end
 
