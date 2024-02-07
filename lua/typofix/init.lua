@@ -92,10 +92,11 @@ end
 ---@param correct string
 ---@param forced boolean
 function RegisterTypo(incorrect, correct, forced)
+  if incorrect == nil or correct == nil then return end
   if AbbreviationExists(incorrect) and not forced then
     vim.notify("Typo already registered: " .. incorrect)
     vim.ui.input({ prompt = "Overwrite [y/n]: " },
-      function(confirmation) if confirmation == "y" then RegisterTypo(incorrrect, correct, true) end end)
+      function(confirmation) if confirmation == "y" then RegisterTypo(incorrect, correct, true) end end)
   else
     vim.cmd("iabbrev " .. incorrect .. " " .. correct)
     SaveTypo(incorrect, correct)
@@ -132,6 +133,7 @@ end
 --- Unregisters a typo
 ---@param incorrect string
 function UnregisterTypo(incorrect)
+  if incorrect == nil then return end
   if AbbreviationExists(incorrect) then
     vim.cmd("iunabbrev " .. incorrect)
     UnregisterTypoInFile(incorrect)
@@ -143,8 +145,9 @@ end
 
 --- Reads the correct form of a typo (called by CreateTypo)
 ---@param incorrect string
-function ReadTypoCorrect(incorrrect)
-  vim.ui.input({ prompt = "Correct: " }, function(correct) RegisterTypo(incorrrect, correct, false) end)
+function ReadTypoCorrect(incorrect)
+  if incorrect == nil then return end
+  vim.ui.input({ prompt = "Correct: " }, function(correct) RegisterTypo(incorrect, correct, false) end)
 end
 
 --- Creates a typo
