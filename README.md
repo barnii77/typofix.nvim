@@ -11,20 +11,26 @@ You can simply install it using your favorite package manager, select what user 
 # Installation
 To install using Lazy, just add this to your list of plugins:
 ```lua
+-- NOTE: these {} are not required if you use default settings
 {
-  {
-    "barnii77/typofix.nvim",
-    opts = {
-      path = "path/to/abbreviations/file.vim",
-      features = {
-        create = true,
-        delete = true,
-        list = true,
-        enable = true,
-        disable = true,
-        print_opts = false,
-      },
-    }
+  "barnii77/typofix.nvim"
+}
+```
+
+Full list of settings (adjust however you like):
+```lua
+{
+  "barnii77/typofix.nvim",
+  opts = {
+    path = "path/to/abbreviations/file.vim",
+    features = {
+      create = true,
+      delete = true,
+      list = true,
+      enable = true,
+      disable = true,
+      print_opts = false,
+    },
   }
 }
 ```
