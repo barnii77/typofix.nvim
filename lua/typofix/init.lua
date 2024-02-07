@@ -39,6 +39,17 @@ function CheckPathIsValidAndCreateFileIfNotExists(path)
   return true
 end
 
+--- Utility function to trim whitespaces from a string
+---@param s any
+---@return unknown
+local function trim(s)
+  return s:match("^%s*(.-)%s*$")
+end
+
+--- Utility function to check if a string starts with another string
+---@param str any
+---@param start any
+---@return boolean
 local function starts_with(str, start)
   return str:sub(1, #start) == start
 end
@@ -65,12 +76,33 @@ function typofix.setup(opts)
     vim.api.nvim_create_user_command('TypoFixDelete', DeleteTypo, { nargs = 0 })
     vim.api.nvim_create_user_command('TypoFixList', TypoFixList, { nargs = 0 })
     vim.api.nvim_create_user_command('TypoFixPrintOpts', function() vim.notify(typofix.opts.path) end, { nargs = 0 })
+    vim.api.nvim_create_user_command('TypoFixEnable', typofix.enable, { nargs = 0 })
+    vim.api.nvim_create_user_command('TypoFixDisable', typofix.disable, { nargs = 0 })
   end
 end
 
-local function trim(s)
-  return s:match("^%s*(.-)%s*$")
+function typofix.enable()
+  vim.cmd("source " .. typofix.opts.path)
 end
+
+function typofix.disable()
+  local file = io.open(typofix.opts.path, "r")
+  if file == nil then
+    vim.notify("Could not read file: " .. typofix.opts.path, vim.log.levels.WARN)
+    return
+  end
+  local cmd = ""
+  for line in file:lines() do
+    if starts_with(line, ":iabbrev ") then
+      line = trim(line:sub(10))
+      -- NOTE: ^(%S+) matches all non-whitespace characters at the start of a string (= first word)
+      local incorrect = line:match("^(%S+)")
+      cmd = cmd .. "iunabbrev " .. incorrect .. "\n"
+    end
+  end
+  vim.cmd(cmd)
+end
+
 
 -- functionality
 
