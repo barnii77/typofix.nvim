@@ -1,8 +1,6 @@
 -- TypoFix object for setup (lazy)
 
-local typofix = {
-  typofixes = {},
-}
+local typofix = {}
 
 --- Utility function to check if path to typo fix storage is valid
 --- If file does not exist, it will be created
@@ -41,6 +39,10 @@ function CheckPathIsValidAndCreateFileIfNotExists(path)
   return true
 end
 
+local function starts_with(str, start)
+  return str:sub(1, #start) == start
+end
+
 --- Setup called by Lazy / Packer / etc.
 ---@param opts table
 function typofix.setup(opts)
@@ -54,7 +56,8 @@ function typofix.setup(opts)
   typofix.opts.path = vim.fn.expand(typofix.opts.path .. ":p"):sub(1, -3)
 
   if not CheckPathIsValidAndCreateFileIfNotExists(typofix.opts.path) then
-    vim.notify("Error in TypoFix plugin setup: Path to typofix storage file is invalid; Path: " .. typofix.opts.path, vim.log.levels.ERROR)
+    vim.notify("Error in TypoFix plugin setup: Path to typofix storage file is invalid; Path: " .. typofix.opts.path,
+      vim.log.levels.ERROR)
   else
     -- read file
     vim.cmd("source " .. typofix.opts.path)
@@ -66,17 +69,30 @@ end
 
 -- functionality
 
+function AbbreviationExists(abbrev)
+  -- Use the :abbreviate command with the abbreviation to check
+  local output = vim.fn.execute('iabbrev ' .. abbrev)
+  -- Check if the output contains the abbreviation
+  -- The output will be more than one line if the abbreviation exists
+  if output == '' then
+    return false
+  elseif output[1] ~= 'i' then
+    return false
+  else
+    return true
+  end
+end
+
 --- Registers a typo
 ---@param incorrect string
 ---@param correct string
 ---@param forced boolean
 function RegisterTypo(incorrect, correct, forced)
-  if typofix.typofixes[incorrect] and not forced then
+  if AbbreviationExists(incorrect) and not forced then
     vim.notify("Typo already registered: " .. incorrect)
     vim.ui.input({ prompt = "Overwrite [y/n]: " },
       function(confirmation) if confirmation == "y" then RegisterTypo(incorrrect, correct, true) end end)
   else
-    typofix.typofixes[incorrect] = correct
     vim.cmd("iabbrev " .. incorrect .. " " .. correct)
     SaveTypo(incorrect, correct)
     vim.notify("Created TypoFix for " .. incorrect .. " (" .. correct .. ")")
@@ -93,7 +109,7 @@ function UnregisterTypoInFile(incorrect)
   end
   local lines = {}
   for line in file:lines() do
-    if line ~= (":iabbrev " .. incorrect .. " " .. typofix.typofixes[incorrect]) then
+    if not starts_with(line, ":iabbrev " .. incorrect) then
       table.insert(lines, line)
     end
   end
@@ -112,8 +128,7 @@ end
 --- Unregisters a typo
 ---@param incorrect string
 function UnregisterTypo(incorrect)
-  if typofix.typofixes[incorrect] then
-    typofix.typofixes[incorrect] = nil
+  if AbbreviationExists(incorrect) then
     vim.cmd("iunabbrev " .. incorrect)
     UnregisterTypoInFile(incorrect)
     vim.notify("Deleted TypoFix for " .. incorrect)
