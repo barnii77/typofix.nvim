@@ -8,7 +8,7 @@ TypoFix is not a plugin that checks your spelling and it does not auto-correct a
 TypoFix is a Neovim plugin that makes it quick and easy to manage insert abbreviations (see `:help iabbrev`).
 You can simply install it using your favorite package manager, select what user commands you want to have and you're good to go!
 
-# Installation
+# 📦 Installation
 To install using Lazy, just add this to your list of plugins:
 ```lua
 -- NOTE: these {} are not required if you use default settings
@@ -35,9 +35,7 @@ Full list of settings (adjust however you like):
 }
 ```
 
-# Configuration
-
-## Options
+# ⚙️ Configuration
 | option | default | description |
 |--------|---------|-------------|
 | path   | "$HOME/.config/nvim/typofix.vim" | The path where the vim file containing the iabbrevs is stored |
@@ -48,7 +46,7 @@ Full list of settings (adjust however you like):
 | features.disable | true | whether to add the TypoFixDisable command as a user command on startup |
 | features.print_opts | true | whether to add the TypoFixPrintOpts command as a user command on startup |
 
-## Features
+# ✨ Features
 | command | description |
 |---------|-------------|
 | TypoFixCreate | Create a new typo fix and write it to file |
