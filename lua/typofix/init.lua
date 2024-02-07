@@ -63,7 +63,8 @@ function typofix.setup(opts)
     vim.cmd("source " .. typofix.opts.path)
     vim.api.nvim_create_user_command('TypoFixCreate', CreateTypo, { nargs = 0 })
     vim.api.nvim_create_user_command('TypoFixDelete', DeleteTypo, { nargs = 0 })
-    vim.api.nvim_create_user_command('TypoFixPrintOpts', function() vim.notify(typofix.opts.path) end, { nargs = 0 })
+    vim.api.nvim_create_user_command('TypoFixList', TypoFixList(), { nargs = 0 })
+    vim.api.nvim_create_user_command('TypoFixPrintOpts', function() vim.notify(typofix.opts.path, vim.log.levels.DEBUG) end, { nargs = 0 })
   end
 end
 
@@ -72,6 +73,24 @@ local function trim(s)
 end
 
 -- functionality
+
+function TypoFixList()
+  local file = io.open(typofix.opts.path, "r")
+  if file == nil then
+    vim.notify("Could not read file: " .. typofix.opts.path, vim.log.levels.WARN)
+    return
+  end
+  local lines = {}
+  for line in file:lines() do
+    if starts_with(line, ":iabbrev ") then
+      line = line:sub(10)
+      table.insert(lines, line)
+    end
+  end
+  file:close()
+  local joined = table.concat(lines, "\n")
+  vim.notify(joined)
+end
 
 function AbbreviationExists(abbrev)
   -- Use the :abbreviate command with the abbreviation to check
