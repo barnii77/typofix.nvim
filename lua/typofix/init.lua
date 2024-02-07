@@ -112,15 +112,19 @@ end
 ---@param forced boolean
 function RegisterTypo(incorrect, correct, forced)
   if incorrect == nil or correct == nil then return end
-  if AbbreviationExists(incorrect) and not forced then
+  local abbreviation_exists = AbbreviationExists(incorrect)
+  if abbreviation_exists and not forced then
     vim.notify("Typo already registered: " .. incorrect)
     vim.ui.input({ prompt = "Overwrite [y/n]: " },
       function(confirmation) if confirmation == "y" then RegisterTypo(incorrect, correct, true) end end)
-  else
-    vim.cmd("iabbrev " .. incorrect .. " " .. correct)
-    SaveTypo(incorrect, correct)
-    vim.notify("Created TypoFix for " .. incorrect .. " (" .. correct .. ")")
+    return
+  elseif abbreviation_exists then
+    -- if overwrite, remove the old one from file so there are no duplicates
+    UnregisterTypoInFile(incorrect)
   end
+  vim.cmd("iabbrev " .. incorrect .. " " .. correct)
+  SaveTypo(incorrect, correct)
+  vim.notify("Created TypoFix for " .. incorrect .. " (" .. correct .. ")")
 end
 
 --- Unregisters a typo in the typo storage file
