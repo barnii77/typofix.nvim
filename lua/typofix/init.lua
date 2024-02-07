@@ -54,6 +54,20 @@ local function starts_with(str, start)
   return str:sub(1, #start) == start
 end
 
+local function abbreviation_exists(abbrev)
+  -- Use the :abbreviate command with the abbreviation to check
+  local output = trim(vim.fn.execute('iabbrev ' .. abbrev))
+  -- Check if the output contains the abbreviation
+  -- The output will be more than one line if the abbreviation exists
+  if output == '' then
+    return false
+  elseif output:sub(1, 1) ~= 'i' then
+    return false
+  else
+    return true
+  end
+end
+
 --- Setup called by Lazy / Packer / etc.
 ---@param opts table
 function typofix.setup(opts)
@@ -97,7 +111,9 @@ function typofix.disable()
       line = trim(line:sub(10))
       -- NOTE: ^(%S+) matches all non-whitespace characters at the start of a string (= first word)
       local incorrect = line:match("^(%S+)")
-      cmd = cmd .. "iunabbrev " .. incorrect .. "\n"
+      if abbreviation_exists(incorrect) then
+        cmd = cmd .. "iunabbrev " .. incorrect .. "\n"
+      end
     end
   end
   vim.cmd(cmd)
@@ -124,27 +140,13 @@ function TypoFixList()
   vim.notify(joined)
 end
 
-function AbbreviationExists(abbrev)
-  -- Use the :abbreviate command with the abbreviation to check
-  local output = trim(vim.fn.execute('iabbrev ' .. abbrev))
-  -- Check if the output contains the abbreviation
-  -- The output will be more than one line if the abbreviation exists
-  if output == '' then
-    return false
-  elseif output:sub(1, 1) ~= 'i' then
-    return false
-  else
-    return true
-  end
-end
-
 --- Registers a typo
 ---@param incorrect string
 ---@param correct string
 ---@param forced boolean
 function RegisterTypo(incorrect, correct, forced)
   if incorrect == nil or correct == nil then return end
-  local abbreviation_exists = AbbreviationExists(incorrect)
+  local abbreviation_exists = abbreviation_exists(incorrect)
   if abbreviation_exists and not forced then
     vim.notify("Typo already registered: " .. incorrect)
     vim.ui.input({ prompt = "Overwrite [y/n]: " },
@@ -189,7 +191,7 @@ end
 ---@param incorrect string
 function UnregisterTypo(incorrect)
   if incorrect == nil then return end
-  if AbbreviationExists(incorrect) then
+  if abbreviation_exists(incorrect) then
     vim.cmd("iunabbrev " .. incorrect)
     UnregisterTypoInFile(incorrect)
     vim.notify("Deleted TypoFix for " .. incorrect)
