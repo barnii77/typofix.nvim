@@ -63,7 +63,7 @@ function typofix.setup(opts)
     vim.cmd("source " .. typofix.opts.path)
     vim.api.nvim_create_user_command('TypoFixCreate', CreateTypo, { nargs = 0 })
     vim.api.nvim_create_user_command('TypoFixDelete', DeleteTypo, { nargs = 0 })
-    vim.api.nvim_create_user_command('TypoFixList', TypoFixList(), { nargs = 0 })
+    vim.api.nvim_create_user_command('TypoFixList', TypoFixList, { nargs = 0 })
     vim.api.nvim_create_user_command('TypoFixPrintOpts', function() vim.notify(typofix.opts.path, vim.log.levels.DEBUG) end, { nargs = 0 })
   end
 end
