@@ -1,4 +1,4 @@
-# Overview
+# 💥 Overview
 ![typofix](docs/typo-ide-fix.png)
 
 ## What TypoFix is **not**
