@@ -67,16 +67,20 @@ function typofix.setup(opts)
   end
 end
 
+local function trim(s)
+  return s:match("^%s*(.-)%s*$")
+end
+
 -- functionality
 
 function AbbreviationExists(abbrev)
   -- Use the :abbreviate command with the abbreviation to check
-  local output = vim.fn.execute('iabbrev ' .. abbrev)
+  local output = trim(vim.fn.execute('iabbrev ' .. abbrev))
   -- Check if the output contains the abbreviation
   -- The output will be more than one line if the abbreviation exists
   if output == '' then
     return false
-  elseif output[1] ~= 'i' then
+  elseif output:sub(1, 1) ~= 'i' then
     return false
   else
     return true
