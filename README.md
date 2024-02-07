@@ -57,3 +57,36 @@ Full list of settings (adjust however you like):
 | TypoFixEnable | Enable fixing of typos |
 | TypoFixDisable | Disables fixing of typos |
 | TypoFixPrintOpts | Prints the path where your typo file is stored |
+
+# How it works
+Behind the scenes, this plugin uses Vim's iabbreviation feature, which allows you to set abbreviations that, when a space is placed after them, will be expanded to their full form. This can be used for fixing typos because you can just set the incorrect version as the abbreviation for the correct version. So if this feature exists in Vim/Neovim already, where does this plugin fit in?
+
+# Why I made it
+If you didn't use this plugin, what would you have to do to create a new abbreviation once you notice you are making a certain typo very often?
+
+The worst way to do it:
+1. You have to quit Neovim
+2. You have to navigate to your configuration
+3. You have to open your configuration file of choice where you want to add all the abbreviations
+4. You have to remember what the typo was and type it out in your config
+5. You have to quit Neovim again
+6. You have to go back to where you were before and re-open all your files
+
+Now, this can be optimized a bit:
+1. Open a file in your config folder where you store your abbreviations and type out the entire file path while doing so
+2. Source your file, once again typing out the entire file path
+
+What does this look like with TypoFix?
+1. You type `:TypoFixCreate` (or just do `<Leader>ufc` like me xD)
+2. You take a sip of your green tea and enjoy the fact you didn't have to type out file paths
+
+For deleting, the procedure is similar.
+
+However, once you want to deactivate and activate the typo-fixing, the manual methods start to fall apart. Here's what you need for those:
+1. Create an iabbrev.vim file
+2. Create an iunabbrev.vim file
+3. Keep them synchronized, which increases the work required to use the manual methods drastically.
+4. Once in a while, go and fix up the files because you will probably screw up the synchronization
+
+Meanwhile, TypoFix does all that for you, and you don't have to take any extra steps!
+TypoFix keeps track of your typos in the Vim file at the path you specified without you having to do anything but use the plugin commands.
