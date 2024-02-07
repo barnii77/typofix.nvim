@@ -5,9 +5,10 @@ local typofix = {
 }
 
 --- Utility function to check if path to typo fix storage is valid
+--- If file does not exist, it will be created
 ---@param path string
 ---@return boolean
-function PathIsValid(path)
+function CheckPathIsValidAndCreateFileIfNotExists(path)
   -- check length of extension
   local len = path:len()
   if len < 4 then
@@ -52,9 +53,11 @@ function typofix.setup(opts)
   }, opts)
   typofix.opts.path = vim.fn.expand(typofix.opts.path .. ":p"):sub(1, -3)
 
-  if not PathIsValid(typofix.opts.path) then
+  if not CheckPathIsValidAndCreateFileIfNotExists(typofix.opts.path) then
     vim.notify("Error in TypoFix plugin setup: Path to typofix storage file is invalid; Path: " .. typofix.opts.path, vim.log.levels.ERROR)
   else
+    -- read file
+    vim.cmd("source " .. typofix.opts.path)
     vim.api.nvim_create_user_command('TypoFixCreate', CreateTypo, { nargs = 0 })
     vim.api.nvim_create_user_command('TypoFixDelete', DeleteTypo, { nargs = 0 })
     vim.api.nvim_create_user_command('TypoFixPrintOpts', function() vim.notify(typofix.opts.path) end, { nargs = 0 })
