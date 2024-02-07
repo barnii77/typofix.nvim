@@ -40,7 +40,7 @@ Full list of settings (adjust however you like):
 ## Options
 | option | default | description |
 |--------|---------|-------------|
-| path   | "$HOME/.config/nvim/typofix.vim" | The path where the vim file containing the iabbrevs |
+| path   | "$HOME/.config/nvim/typofix.vim" | The path where the vim file containing the iabbrevs is stored |
 | features.create | true | whether to add the TypoFixCreate command as a user command on startup |
 | features.delete | true | whether to add the TypoFixDelete command as a user command on startup |
 | features.list | true | whether to add the TypoFixList command as a user command on startup |
